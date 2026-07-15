@@ -11,8 +11,8 @@ DROP PROCEDURE IF EXISTS sp_tambah_peminjaman;
 CREATE PROCEDURE sp_tambah_peminjaman(
   IN p_anggota_id INT,
   IN p_buku_id INT,
-  IN p_tanggal_pinjam DATE,
-  IN p_tanggal_jatuh_tempo DATE
+   IN p_tanggal_pinjam DATETIME,
+  IN p_tanggal_jatuh_tempo DATETIME
 )
 BEGIN
   DECLARE stok_tersedia INT;
@@ -34,7 +34,7 @@ END //
 DROP PROCEDURE IF EXISTS sp_tambah_pengembalian;
 CREATE PROCEDURE sp_tambah_pengembalian(
   IN p_peminjaman_id INT,
-  IN p_tanggal_kembali DATE,
+  IN p_tanggal_kembali DATETIME,
   IN p_kondisi_buku ENUM('baik', 'rusak', 'hilang')
 )
 BEGIN
@@ -77,8 +77,8 @@ END //
 -- 5. Laporan Peminjaman per Periode
 DROP PROCEDURE IF EXISTS sp_laporan_peminjaman;
 CREATE PROCEDURE sp_laporan_peminjaman(
-  IN p_tanggal_mulai DATE,
-  IN p_tanggal_selesai DATE
+  IN p_tanggal_mulai DATETIME,
+  IN p_tanggal_selesai DATETIME
 )
 BEGIN
   SELECT p.id, a.nama as anggota, b.judul as buku,

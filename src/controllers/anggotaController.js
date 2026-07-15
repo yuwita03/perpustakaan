@@ -37,26 +37,28 @@ exports.create = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const { nama, alamat, no_telepon, email, tanggal_daftar } = req.body;
-    const [result] = await db.execute(
+
+    const [cek] = await db.execute('SELECT status FROM anggota WHERE id = ?', [req.params.id]);
+    if (cek.length === 0) return res.status(404).json({ error: 'Anggota tidak ditemukan' });
+    if (cek[0].status === 'nonaktif') return res.status(403).json({ error: 'Anggota yang dinonaktifkan tidak bisa diedit' });
+
+    await db.execute(
       'UPDATE anggota SET nama=?, alamat=?, no_telepon=?, email=?, tanggal_daftar=? WHERE id=?',
       [nama, alamat, no_telepon, email, tanggal_daftar, req.params.id]
     );
-    if (result.affectedRows === 0) return res.status(404).json({ error: 'Anggota tidak ditemukan' });
     res.json({ message: 'Anggota berhasil diupdate' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-exports.remove = async (req, res) => {
+exports.toggleStatus = async (req, res) => {
   try {
-    const [peminjaman] = await db.execute('SELECT id FROM peminjaman WHERE anggota_id = ? LIMIT 1', [req.params.id]);
-    if (peminjaman.length > 0) {
-      return res.status(400).json({ error: 'Anggota memiliki riwayat peminjaman. Hapus peminjaman terlebih dahulu.' });
-    }
-    const [result] = await db.execute('DELETE FROM anggota WHERE id = ?', [req.params.id]);
-    if (result.affectedRows === 0) return res.status(404).json({ error: 'Anggota tidak ditemukan' });
-    res.json({ message: 'Anggota berhasil dihapus' });
+    const [anggota] = await db.execute('SELECT status FROM anggota WHERE id = ?', [req.params.id]);
+    if (anggota.length === 0) return res.status(404).json({ error: 'Anggota tidak ditemukan' });
+    const newStatus = anggota[0].status === 'aktif' ? 'nonaktif' : 'aktif';
+    await db.execute('UPDATE anggota SET status = ? WHERE id = ?', [newStatus, req.params.id]);
+    res.json({ message: `Anggota berhasil di${newStatus === 'aktif' ? 'aktifkan' : 'nonaktifkan'}`, status: newStatus });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

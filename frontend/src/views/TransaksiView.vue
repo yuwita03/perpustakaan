@@ -11,7 +11,7 @@
             <label class="block text-sm font-medium mb-1">Anggota</label>
             <select v-model="pinjam.anggota_id" class="w-full border rounded px-3 py-2" required>
               <option value="">-- Pilih Anggota --</option>
-              <option v-for="a in anggota" :key="a.id" :value="a.id">{{ a.nama }}</option>
+              <option v-for="a in anggotaAktif" :key="a.id" :value="a.id">{{ a.nama }}</option>
             </select>
           </div>
           <div class="mb-3">
@@ -23,11 +23,11 @@
           </div>
           <div class="mb-3">
             <label class="block text-sm font-medium mb-1">Tgl Pinjam</label>
-            <input v-model="pinjam.tanggal_pinjam" type="date" class="w-full border rounded px-3 py-2" />
+            <input v-model="pinjam.tanggal_pinjam" type="datetime-local" class="w-full border rounded px-3 py-2" />
           </div>
           <div class="mb-4">
             <label class="block text-sm font-medium mb-1">Tgl Jatuh Tempo</label>
-            <input v-model="pinjam.tanggal_jatuh_tempo" type="date" class="w-full border rounded px-3 py-2" />
+            <input v-model="pinjam.tanggal_jatuh_tempo" type="datetime-local" class="w-full border rounded px-3 py-2" />
           </div>
           <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Simpan Peminjaman</button>
         </form>
@@ -49,7 +49,7 @@
           </div>
           <div class="mb-3">
             <label class="block text-sm font-medium mb-1">Tgl Kembali</label>
-            <input v-model="kembali.tanggal_kembali" type="date" class="w-full border rounded px-3 py-2" />
+            <input v-model="kembali.tanggal_kembali" type="datetime-local" class="w-full border rounded px-3 py-2" />
           </div>
           <div class="mb-4">
             <label class="block text-sm font-medium mb-1">Kondisi Buku</label>
@@ -102,6 +102,7 @@ const pinjamMsg = ref('')
 const kembaliMsg = ref('')
 
 const peminjamanAktif = computed(() => riwayat.value.filter(r => r.status === 'dipinjam'))
+const anggotaAktif = computed(() => anggota.value.filter(a => a.status !== 'nonaktif'))
 
 onMounted(async () => {
   const [resAnggota, resBuku, resRiwayat] = await Promise.all([getAnggota(), getBuku(), getRiwayat()])

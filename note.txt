@@ -1,0 +1,9 @@
+2. Cara pakai kualitas data before/after:
+- jumlah_sebelum = kondisi waktu data kotor dimasukkan (hardcoded di laporan_kualitas_data.sql)
+- jumlah_sesudah = dicek otomatis setiap halaman Laporan dibuka lewat sp_cek_kualitas_data() — dia menjalankan ulang query identifikasi data bermasalah dan update tabel
+- Jadi setiap refresh halaman, jumlah_sesudah selalu real-time sesuai kondisi database terkini
+Kalau mau test ulang quality check dari awal (reset data kotor):
+SOURCE databases/dirty_data.sql      -- masukkan data kotor lagi
+SOURCE databases/data_quality_checks.sql  -- lihat jumlah_sebelum
+SOURCE databases/data_fixes.sql           -- perbaiki
+-- refresh halaman laporan → jumlah_sesudah otomatis 0 lagi

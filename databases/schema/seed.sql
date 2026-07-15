@@ -5,6 +5,7 @@ INSERT INTO users (username, password_hash, role) VALUES
 ('admin', '$2b$10$bCwPwDIkvvzhS6P9YmIdGuqgdKIfKv2fJ6uNj1Ma3Iirw2BL0h3dm', 'administrator'),
 ('petugas1', '$2b$10$bCwPwDIkvvzhS6P9YmIdGuqgdKIfKv2fJ6uNj1Ma3Iirw2BL0h3dm', 'petugas');
 -- password untuk kedua user di atas adalah: password123
+
 -- Kategori Buku
 INSERT INTO kategori_buku (nama_kategori) VALUES
 ('Teknologi Informasi'),

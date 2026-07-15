@@ -1,5 +1,10 @@
 const db = require('../config/db');
 
+function fmtDatetime(d) {
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+}
+
 exports.getAll = async (req, res) => {
   try {
     const [rows] = await db.execute(
@@ -25,7 +30,7 @@ exports.create = async (req, res) => {
 
     await db.execute('CALL sp_tambah_pengembalian(?, ?, ?)', [
       peminjaman_id,
-      tanggal_kembali || new Date().toISOString().split('T')[0],
+      tanggal_kembali || fmtDatetime(new Date()),
       kondisi_buku || 'baik',
     ]);
 

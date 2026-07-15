@@ -8,6 +8,6 @@ router.get('/search', isAuthenticated, anggotaController.search);
 router.get('/:id', isAuthenticated, anggotaController.getById);
 router.post('/', isAuthenticated, anggotaController.create);
 router.put('/:id', isAuthenticated, anggotaController.update);
-router.delete('/:id', isAuthenticated, isAdministrator, anggotaController.remove);
+router.put('/:id/toggle-status', isAuthenticated, isAdministrator, anggotaController.toggleStatus);
 
 module.exports = router;

@@ -11,18 +11,20 @@
 
     <div class="bg-white rounded shadow overflow-x-auto">
       <table class="w-full text-sm">
-        <thead><tr class="bg-gray-50 text-left"><th class="p-3">ID</th><th>Nama</th><th>Alamat</th><th>Telepon</th><th>Email</th><th>Tgl Daftar</th><th>Aksi</th></tr></thead>
+        <thead><tr class="bg-gray-50 text-left"><th class="p-3">ID</th><th>Nama</th><th>Alamat</th><th>Telepon</th><th>Email</th><th>Tgl Daftar</th><th>Status</th><th>Aksi</th></tr></thead>
         <tbody>
-          <tr v-for="a in anggota" :key="a.id" class="border-t">
+          <tr v-for="a in anggota" :key="a.id" class="border-t" :class="a.status === 'nonaktif' ? 'opacity-50' : ''">
             <td class="p-3">{{ a.id }}</td>
             <td>{{ a.nama }}</td>
             <td>{{ a.alamat || '-' }}</td>
             <td>{{ a.no_telepon || '-' }}</td>
             <td>{{ a.email || '-' }}</td>
             <td>{{ a.tanggal_daftar || '-' }}</td>
+            <td><span :class="a.status === 'aktif' ? 'text-green-600' : 'text-red-600'">{{ a.status || 'aktif' }}</span></td>
             <td>
-              <button @click="editAnggota(a)" class="text-blue-600 hover:underline mr-2">Edit</button>
-              <button @click="handleDelete(a.id)" class="text-red-600 hover:underline">Hapus</button>
+              <button v-if="a.status === 'aktif'" @click="editAnggota(a)" class="text-blue-600 hover:underline mr-2">Edit</button>
+              <span v-else class="text-gray-400 mr-2">Tidak bisa diedit</span>
+              <button @click="handleToggleStatus(a)" :class="a.status === 'nonaktif' ? 'text-green-600 hover:underline' : 'text-red-600 hover:underline'">{{ a.status === 'nonaktif' ? 'Aktifkan' : 'Nonaktifkan' }}</button>
             </td>
           </tr>
         </tbody>
@@ -51,7 +53,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { getAnggota, createAnggota, updateAnggota, deleteAnggota, searchAnggota } from '../api'
+import { getAnggota, createAnggota, updateAnggota, toggleStatusAnggota, searchAnggota } from '../api'
 import { useAuthStore } from '../stores/auth'
 
 const auth = useAuthStore()
@@ -96,13 +98,14 @@ async function handleSave() {
   loadData()
 }
 
-async function handleDelete(id) {
-  if (!confirm('Yakin hapus?')) return
+async function handleToggleStatus(a) {
+  const action = a.status === 'aktif' ? 'Nonaktifkan' : 'Aktifkan';
+  if (!confirm(`${action} anggota ini?`)) return
   try {
-    await deleteAnggota(id)
+    await toggleStatusAnggota(a.id)
     loadData()
   } catch (err) {
-    alert(err.response?.data?.error || 'Gagal menghapus')
+    alert(err.response?.data?.error || 'Gagal mengubah status')
   }
 }
 </script>

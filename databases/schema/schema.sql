@@ -16,6 +16,7 @@ CREATE TABLE anggota (
   no_telepon VARCHAR(20),
   email VARCHAR(100),
   tanggal_daftar DATE,
+  status ENUM('aktif', 'nonaktif') DEFAULT 'aktif',
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );

@@ -33,8 +33,8 @@ export function updateAnggota(id, data) {
   return api.put(`/anggota/${id}`, data)
 }
 
-export function deleteAnggota(id) {
-  return api.delete(`/anggota/${id}`)
+export function toggleStatusAnggota(id) {
+  return api.put(`/anggota/${id}/toggle-status`)
 }
 
 export function searchAnggota(q) {
@@ -119,6 +119,10 @@ export function getRiwayat() {
 
 export function getBukuTerpopuler() {
   return api.get('/laporan/buku-terpopuler')
+}
+
+export function getKualitasData() {
+  return api.get('/laporan/kualitas-data')
 }
 
 export function getLaporanPerPeriode(mulai, selesai) {

@@ -70,32 +70,48 @@
 
     <div class="bg-white rounded shadow p-4 mt-6">
       <h3 class="font-semibold mb-4">Kualitas Data - Sebelum & Sesudah Perbaikan</h3>
-      <p class="text-sm text-gray-600 mb-2">Jalankan query berikut di MySQL untuk melihat laporan kualitas data:</p>
-      <div class="bg-gray-100 p-3 rounded text-xs font-mono whitespace-pre-wrap">-- Identifikasi data bermasalah (sebelum perbaikan):
-SOURCE C:/Project/perpustakaan/databases/data_quality_checks.sql;
-
--- Perbaiki data:
-SOURCE C:/Project/perpustakaan/databases/data_fixes.sql;</div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead><tr class="bg-gray-50 text-left"><th class="p-2">Tabel</th><th>Jenis Masalah</th><th class="text-center">Sebelum</th><th class="text-center">Sesudah</th><th class="text-center">Status</th></tr></thead>
+          <tbody>
+            <tr v-for="d in kualitasData" :key="d.id" class="border-t">
+              <td class="p-2">{{ d.tabel_terkait }}</td>
+              <td>{{ d.jenis_masalah }}</td>
+              <td class="text-center">{{ d.jumlah_sebelum }}</td>
+              <td class="text-center">{{ d.jumlah_sesudah }}</td>
+              <td class="text-center">
+                <span v-if="d.jumlah_sesudah === 0" class="text-green-600 font-medium">✓ Bersih</span>
+                <span v-else class="text-red-600 font-medium">✗ Bermasalah</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <p v-if="kualitasData.length === 0" class="p-4 text-gray-400 text-center">Belum ada data</p>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { getBukuTersedia, getBukuDipinjam, getRiwayat, getLaporanPerPeriode } from '../api'
+import { getBukuTersedia, getBukuDipinjam, getRiwayat, getLaporanPerPeriode, getKualitasData } from '../api'
 
 const bukuTersedia = ref([])
 const bukuDipinjam = ref([])
 const riwayat = ref([])
 const laporanPeriode = ref([])
+const kualitasData = ref([])
 const periode = ref({ mulai: '', selesai: '' })
 
 onMounted(async () => {
   try {
-    const [t, d, r] = await Promise.all([getBukuTersedia(), getBukuDipinjam(), getRiwayat()])
+    const [t, d, r, k] = await Promise.all([
+      getBukuTersedia(), getBukuDipinjam(), getRiwayat(), getKualitasData(),
+    ])
     bukuTersedia.value = t.data
     bukuDipinjam.value = d.data
     riwayat.value = r.data
+    kualitasData.value = k.data
   } catch (err) { console.error(err) }
 })
 

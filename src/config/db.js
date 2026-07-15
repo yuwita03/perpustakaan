@@ -6,7 +6,8 @@ const pool = mysql.createPool({
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '',
   database: process.env.DB_NAME || 'perpustakaan_db',
-  dateStrings: true,   // <-- tambahin ini
+  dateStrings: true,
+  timezone: '+07:00',
   port: parseInt(process.env.DB_PORT) || 3306,
   waitForConnections: true,
   connectionLimit: 10,

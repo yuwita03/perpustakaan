@@ -45,6 +45,24 @@ exports.bukuTerpopuler = async (req, res) => {
   }
 };
 
+exports.kualitasData = async (req, res) => {
+  try {
+    // update hasil pengecekan
+    await db.execute('CALL sp_cek_kualitas_data()');
+
+    // ambil hasil terbaru
+    const [rows] = await db.execute(
+      'SELECT * FROM laporan_kualitas_data ORDER BY id ASC'
+    );
+
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({
+      error: err.message,
+    });
+  }
+};
+
 exports.perPeriod = async (req, res) => {
   try {
     const { mulai, selesai } = req.query;
