@@ -39,22 +39,22 @@ JOIN anggota a ON p.anggota_id = a.id
 JOIN buku b ON p.buku_id = b.id
 WHERE p.status = 'dipinjam' AND p.tanggal_jatuh_tempo < CURDATE();
 
--- 7. Ringkasan Kualitas Data
-SELECT 'RINGKASAN' as masalah,
-       CONCAT(COUNT(*)) as total,
-       'Data anggota dengan masalah' as keterangan
-FROM (
-  SELECT a.id FROM anggota a
-  WHERE a.nama IS NULL OR a.nama = ''
-     OR a.email IS NULL OR a.email = ''
-     OR (a.email NOT LIKE '%@%' AND a.email != '' AND a.email IS NOT NULL)
-  UNION
-  SELECT a2.id FROM anggota a1
-  JOIN anggota a2 ON a1.email = a2.email AND a1.id <> a2.id
-  WHERE a1.email != '' AND a1.email IS NOT NULL
-) AS masalah
 UNION ALL
 SELECT 'RINGKASAN',
        COUNT(*),
-       'Buku dengan stok tidak valid'
-FROM buku WHERE stok < 0;
+       'Buku dengan data ganda'
+FROM (
+  SELECT b1.id FROM buku b1
+  JOIN buku b2 ON b1.judul = b2.judul 
+    AND b1.penulis = b2.penulis 
+    AND b1.tahun_terbit = b2.tahun_terbit
+    AND b1.id <> b2.id
+) AS buku_ganda;
+
+-- 8. Data Buku Ganda (duplikat berdasarkan judul + penulis + penerbit + tahun)
+SELECT 'BUKU GANDA' as masalah, b1.id, b1.judul, b1.penulis, b1.tahun_terbit
+FROM buku b1
+JOIN buku b2 ON b1.judul = b2.judul 
+  AND b1.penulis = b2.penulis 
+  AND b1.tahun_terbit = b2.tahun_terbit
+  AND b1.id <> b2.id;
