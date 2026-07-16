@@ -5,6 +5,12 @@ import router from './router'
 import './assets/style.css'
 
 const app = createApp(App)
-app.use(createPinia())
-app.use(router)
-app.mount('#app')
+const pinia = createPinia()
+app.use(pinia)
+
+import { useAuthStore } from './stores/auth'
+const auth = useAuthStore()
+auth.checkAuth().finally(() => {
+  app.use(router)
+  app.mount('#app')
+})
